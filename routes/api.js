@@ -5,7 +5,7 @@ router.get('/:devicekey/temp/:type', function(req, res, next) {
   switch(req.params.type) {
   	case 'kelvin':
   	case 'k':
-  		res.send('69'); //todo real numbers and check fallthrough from previous case.
+  		res.send('69'); //todo real numbers and check fallthrough from previous case
   }
 });
 
