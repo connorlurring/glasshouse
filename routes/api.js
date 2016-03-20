@@ -138,6 +138,7 @@ router.post('/write', function(req, res, next) {
   if(req.body) {
   	var params = req.body;
     console.log(JSON.stringify(params, null, 4));
+    console.log(params.device_id);
   	new Promise(function(resolve, reject) {
       checkAuthenticated(params.device_id, params.device_secret)
         .then(function(success) {
