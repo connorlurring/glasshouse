@@ -149,8 +149,6 @@ router.post('/write', function(req, res, next) {
                 console.log(err);
                 return;
               }
-              resolve(true);
-              return;
             });
           }
           return;
