@@ -146,7 +146,7 @@ router.post('/write', function(req, res, next) {
             [params.device_id, params.centigrade, params.fahrenheit, params.humidity, params.kelvin, params.dewpoint, params.light, params.heatindex],
             function(err) {
               if(err) {
-                reject(err);
+                console.log(err);
                 return;
               }
               resolve(true);
@@ -171,7 +171,7 @@ function checkAuthenticated(device_id, device_secret) {
     connection.query('SELECT * FROM `devices` WHERE `device_id`=?', Number(device_id), function(err, rows) {
       if(err) {
         console.log(err);
-        reject(err);
+        reject(err);  
         return;
       }
       if(rows.length > 0) {
