@@ -14,6 +14,7 @@ router.get('/:deviceid/:devicesecret/all', function(req, res, next) {
       if(rows.length > 0) {
         resolve(rows[0]);
       }
+      reject('No rows');
       return;
     });
   }).then(function(record) {
