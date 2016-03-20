@@ -167,21 +167,19 @@ router.post('/write', function(req, res, next) {
 function checkAuthenticated(device_id, device_secret) {
   return new Promise(function(resolve, reject) {
     connection.query('SELECT device_secret FROM `devices` WHERE device_id=?', device_id, function(err, rows) {
-
-        
       if(err) {
         reject(err);
-        console.log(err);
         return;
       }
       if(rows.length > 0) {
+        console.log('device found');
+        console.log(device_secret + rows[0].device_secret);
         if(device_secret == rows[0].device_secret) {
           resolve(true);
           return;
         }
       }
       resolve(false);
-
       return;
     })
   })
