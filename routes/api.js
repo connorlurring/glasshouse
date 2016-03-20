@@ -156,6 +156,7 @@ router.post('/write', function(req, res, next) {
             return;
         })
         .catch(function(error) {
+          console.log(error);
           res.json({
             success: false,
             error: error
