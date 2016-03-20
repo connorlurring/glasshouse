@@ -137,11 +137,11 @@ router.get('/:device_id/:device_secret/:humidity', function(req, res, next) {
 router.post('/write', function(req, res, next) {
   if(req.body) {
   	var params = req.body;
+    console.log(JSON.stringify(params));
   	new Promise(function(resolve, reject) {
       checkAuthenticated(params.device_id, params.device_secret)
-        . then(function(success) {
+        .then(function(success) {
           if(success) {
-            console.log(params);
             connection.query('INSERT INTO `readings` (`device_id`, `centigrade`, `fahrenheit`, `humidity`, `kelvin`, `dewpoint`, `light`, `heatindex`, `time`) VALUES (?,?,?,?,?,?,?,?,NOW())',
               [params.device_id, params.centigrade, params.fahrenheit, params.humidity, params.kelvin, params.dewpoint, params.light, params.heatindex],
               function(err) {
