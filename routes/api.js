@@ -168,7 +168,7 @@ router.post('/write', function(req, res, next) {
 function checkAuthenticated(device_id, device_secret) {
   console.log(device_id + " " + device_secret);
   return new Promise(function(resolve, reject) {
-    connection.query('SELECT `device_secret` FROM `devices` WHERE `device_id`=?', device_id, function(err, rows) {
+    connection.query('SELECT `device_secret` FROM `devices` WHERE `device_id`=?', Number(device_id), function(err, rows) {
       if(err) {
         console.log(err);
         reject(err);
