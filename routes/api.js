@@ -4,37 +4,51 @@ var mysql = require('mysql');
 var config = require('../config');
 var connection = mysql.createConnection(config.mysql);
 
-router.get('/:deviceid/:devicesecret/all', function(req, res, next) {
-  new Promise(function(resolve, reject) {
-    connection.query('SELECT * FROM `readings` WHERE device_id=? ORDER BY `time` DESC LIMIT 1', req.params.deviceid, function(err, rows) {
-      if(err) {
-        reject(err);
+router.get('/:device_id/:device_secret/all', function(req, res, next) {
+  checkAuthenticated(req.params.device_id, req.params.device_secret)
+    .then(function(authenticated) {
+      if(!authenticated) {
+        res.json({
+          success: false,
+          error: 'Authentication failed.'
+        });
         return;
       }
-      if(rows.length > 0) {
-        resolve(rows[0]);
-      }
-      reject('No rows');
-      return;
-    });
-  }).then(function(record) {
-    res.json({
-      success: true,
-      temperature: {
-        centigrade: record.centigrade,
-        fahrenheit: record.fahrenheit,
-        kelvin: record.kelvin,
-        heatindex: record.heatindex
-      },
-      dewpoint: record.dewpoint,
-      humidity: record.humidity
-    });
-  }).catch(function(error) {
-    res.json({
-      success: false,
-      error: error
-    });
-  })
+      new Promise(function(resolve, reject) {
+        connection.query('SELECT * FROM `readings` WHERE device_id=? ORDER BY `time` DESC LIMIT 1', req.params.device_id, function(err, rows) {
+          if(err) {
+            reject(err);
+            return;
+          }
+          if(rows.length > 0) {
+            resolve(rows[0]);
+          }
+          reject('No rows');
+          return;
+        });
+      }).then(function(record) {
+        res.json({
+          success: true,
+          temperature: {
+            centigrade: record.centigrade,
+            fahrenheit: record.fahrenheit,
+            kelvin: record.kelvin,
+            heatindex: record.heatindex
+          },
+          dewpoint: record.dewpoint,
+          humidity: record.humidity,
+          light: record.light
+        });
+      }).catch(function(error) {
+        res.json({
+          success: false,
+          error: 'No records found.'
+        });
+      })
+    }).catch(function(error) {
+      //This one too.
+    })
+  
 });
 
 router.get('/:deviceid/:devicesecret/temp/:type', function(req, res, next) {
@@ -125,62 +139,51 @@ router.post('/write', function(req, res, next) {
   	var params = req.body;
   	new Promise(function(resolve, reject) {
       checkAuthenticated(params.device_id, params.device_secret)
-        .then(function(success) {
+        . then(function(success) {
           if(success) {
-            connection.query('SELECT device_secret FROM `devices` WHERE device_id=?', params.device_id, function(err, rows) {
-              if(err) {
-                reject(err);
-                return;
-              }
-              if(rows.length > 0) {
-                if(req.params.devicesecret == rows[0].device_secret) {
-                  connection.query('INSERT INTO `readings` (device_id,'
-                    +'centigrade, fahrenheit, humidity, kelvin, dewpoint,' +
-                    'time) VALUES (?,?,?,?,?,?,NOW())',
-                    [params.device_id, params.centigrade, params.fahrenheit, params.humidity, params.kelvin, params.dewpoint],
-                    function(err) {
-                      if(err) {
-                        reject(err);
-                        return;
-                      }
-                      resolve(true);
-                      return;
-                    });
-                } else {
-                  reject('Failed authentication.');
+            connection.query('INSERT INTO `readings` (device_id,'
+              +'centigrade, fahrenheit, humidity, kelvin, dewpoint,' +
+              'light, heatindex, time) VALUES (?,?,?,?,?,?,?,NOW())',
+              [params.device_id, params.centigrade, params.fahrenheit, params.humidity, params.kelvin, params.dewpoint, params.light, params.heatindex],
+              function(err) {
+                if(err) {
+                  reject(err);
+                  return;
                 }
-              }
-              return;
-            })
-          }
-          
+                resolve(true);
+                return;
+              });
+            }
+            return;
+          })
         })
-  		
-  	}).then(function(success) {
-      res.json({ success: success });
-    }).catch(function(error) {
-      res.json({
-        success: false,
-        error: error
-      })
-    }) 
+        .catch(function(error) {
+          res.json({
+            success: false,
+            error: error
+          })
+        }) 
   }
 });
 
 function checkAuthenticated(device_id, device_secret) {
   return new Promise(function(resolve, reject) {
     connection.query('SELECT device_secret FROM `devices` WHERE device_id=?', device_id, function(err, rows) {
+
+        
       if(err) {
         reject(err);
+        console.log(err);
         return;
       }
       if(rows.length > 0) {
-        if(devicesecret == rows[0].device_secret) {
+        if(device_secret == rows[0].device_secret) {
           resolve(true);
-        } else {
-          resolve(false);
+          return;
         }
       }
+      resolve(false);
+
       return;
     })
   })
