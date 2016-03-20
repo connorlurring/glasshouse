@@ -130,7 +130,7 @@ router.get('/:deviceid/:devicesecret/dewpoint', function(req, res, next) {
   }
 });
 
-router.get('/:deviceid/:devicesecret/:humidity', function(req, res, next) {
+router.get('/:device_id/:device_secret/:humidity', function(req, res, next) {
   //todo humidity
 });
 
