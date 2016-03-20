@@ -137,6 +137,7 @@ router.get('/:device_id/:device_secret/:humidity', function(req, res, next) {
 router.post('/write', function(req, res, next) {
   if(req.body) {
   	var params = req.body;
+    console.log(params.device_id + ' ' + params.device_secret);
     checkAuthenticated(params.device_id, params.device_secret)
       .then(function(success) {
         console.log('success: ' + success);
@@ -165,6 +166,7 @@ router.post('/write', function(req, res, next) {
 });
 
 function checkAuthenticated(device_id, device_secret) {
+  console.log(device_id + " " + device_secret);
   return new Promise(function(resolve, reject) {
     connection.query('SELECT `device_secret` FROM `devices` WHERE `device_id`=?', device_id, function(err, rows) {
       if(err) {
