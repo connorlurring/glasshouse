@@ -166,7 +166,7 @@ router.post('/write', function(req, res, next) {
 
 function checkAuthenticated(device_id, device_secret) {
   return new Promise(function(resolve, reject) {
-    connection.query('SELECT device_secret FROM `devices` WHERE device_id=?', device_id, function(err, rows) {
+    connection.query('SELECT `device_secret` FROM `devices` WHERE `device_id`=?', device_id, function(err, rows) {
       if(err) {
         console.log(err);
         reject(err);
@@ -188,7 +188,7 @@ function checkAuthenticated(device_id, device_secret) {
 
 function selectColumn(column) {
   return new Promise(function(resolve, reject) {
-        connection.query('SELECT ' + column + ' FROM `readings` WHERE device_id=? ORDER BY `time` DESC LIMIT 1', req.params.deviceid, function(err, rows) {
+        connection.query('SELECT ' + column + ' FROM `readings` WHERE `device_id`=? ORDER BY `time` DESC LIMIT 1', req.params.deviceid, function(err, rows) {
           if(err) {
             reject(err);
             return;
