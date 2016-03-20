@@ -141,7 +141,7 @@ router.post('/write', function(req, res, next) {
       checkAuthenticated(params.device_id, params.device_secret)
         . then(function(success) {
           if(success) {
-            connection.query('INSERT INTO `readings` (device_id,'
+            connection.query('INSERT INTO `readings`(device_id,'
               +'centigrade, fahrenheit, humidity, kelvin, dewpoint,' +
               'light, heatindex, time) VALUES (?,?,?,?,?,?,?,?,NOW())',
               [params.device_id, params.centigrade, params.fahrenheit, params.humidity, params.kelvin, params.dewpoint, params.light, params.heatindex],
